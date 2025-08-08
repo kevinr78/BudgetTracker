@@ -1,0 +1,15 @@
+{
+  "name": "budgettracker",
+  "version": "1.0.0",
+  "description": "Budget Tracker",
+  "license": "ISC",
+  "author": "Kevin",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon --inspect index.js "
+  },
+  "dependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
