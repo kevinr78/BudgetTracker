@@ -1,4 +1,4 @@
-import Transaction from "./Transaction";
+import Transaction from "./Transaction.js";
 
 function Income() {
   Transaction.call(this);
@@ -7,14 +7,12 @@ function Income() {
 Income.prototype = Object.create(Transaction.prototype);
 
 Income.prototype.addIncome = function (type, amount, description) {
-  debugger;
   this.parseTransaction(this.type, amount, description);
 };
 
-Income.prototype.fetchTransactions = function (options, filter = null) {
-    this.fetchAllTransactions(options, filter=null);
+Income.prototype.fetchTransactions = function (options, filter) {
+  this.fetchAllTransactions(options, filter);
 };
-
 
 const income = new Income();
 export { income };

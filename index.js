@@ -1,6 +1,9 @@
 import readline from "readline";
-import { income } from "./models/Income";
-import { expense } from "./models/Expense";
+import logger, { printHelpCommands } from "./utils/logger.js";
+import { income } from "./models/Income.js";
+import { expense } from "./models/Expense.js";
+import TransactionStore from "./store/TransactionStore.js";
+
 const commandPrompt = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
@@ -9,37 +12,60 @@ const commandPrompt = readline.createInterface({
 
 const handleCommands = function (line) {
   const [command] = line.trim().split(" ");
-  debugger
+  if (command === "help") {
+    printHelpCommands();
+    return;
+  }
   if (command === "add") {
-    const [,type, amount, ...description] =  line.trim().split(" ");
+    const [, type, amount, ...description] = line.trim().split(" ");
+    let cleanedDescription = description.join(" ").replace(/"/g, "").trim(); // Remove quotes from description
     if (!amount || !type) {
       return;
     }
-    debugger
     type === "income"
-      ? income.addIncome(type, amount, description)
-      : expense.addExpense(type, amount, description);
-
+      ? income.addIncome(type, amount, cleanedDescription)
+      : expense.addExpense(type, amount, cleanedDescription);
   } else if (command === "list") {
-    const [,options,...filter] = line.trim().split(" ");    
-    income.fetchTransactions(options,filter)
-
-
+    const [, options, ...filter] = line.trim().split(" ");
+    if (!options) {
+      logger("info", "Usage: list [all | income | expense]");
+      return;
+    }
+    if (options === "all") {
+      TransactionStore.getAll().forEach((transaction) => {
+        logger(
+          "info",
+          `${
+            transaction.type.slice(0, 1).toUpperCase() +
+            transaction.type.slice(1)
+          } - $${transaction.amount} - ${transaction.description}`
+        );
+      });
+      return;
+    }
+    options === "income"
+      ? income.fetchTransactions("income", filter)
+      : expense.fetchTransactions("expense", filter);
   } else if (command === "exit") {
     commandPrompt.close();
   } else {
-    console.log("Unknown command. Try: add, list, exit");
+    logger("error", "Unknown command. Try: add, list, exit");
   }
 };
 
 console.log("\n💰 Welcome to Budget Tracker CLI\n");
-commandPrompt.prompt();
+console.log("Use 'help' to see available commands.\n");
 commandPrompt
   .on("line", (arg) => {
-    handleCommands(arg);
+    const trimmed = arg.trim();
+    if (trimmed) {
+      handleCommands(trimmed);
+    }
     commandPrompt.prompt();
   })
   .on("close", () => {
     console.log("GoodBye");
     process.exit(0);
   });
+
+commandPrompt.prompt();

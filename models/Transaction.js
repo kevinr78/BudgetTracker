@@ -1,10 +1,22 @@
+import TransactionStore from "../store/TransactionStore.js";
+import logger from "../utils/logger.js";
 function Transaction() {
-
-
-  this.sortTransaction = function (isAsc,field){
-    
-  }
+  this.sortFunc = {
+    sortByDateAsc: function (a, b) {
+      return new Date(a.date) - new Date(b.date);
+    },
+    sortByDateDesc: function (a, b) {
+      return new Date(b.date) - new Date(a.date);
+    },
+    sortByAmountAsc: function (a, b) {
+      return a.amount - b.amount;
+    },
+    sortByAmountDesc: function (a, b) {
+      return b.amount - a.amount;
+    },
+  };
 }
+
 Transaction.prototype.parseTransaction = function (...line) {
   switch (line[0]) {
     case "income":
@@ -16,16 +28,19 @@ Transaction.prototype.parseTransaction = function (...line) {
       this.fetchTransactions();
       break;
     default:
-      console.log("Unknown command. Try: add, list, exit");
+      logger("error", "Unknown command. Try: add, list, exit");
   }
 };
+
 Transaction.prototype.updateTransactionsList = function (line) {
-  this.transactions.push({
+  TransactionStore.add({
     type: line[0],
     amount: line[1],
     description: line[2],
   });
-  console.log(
+
+  logger(
+    "info",
     `✅ Added ${line[0].slice(0, 1).toUpperCase() + line[0].slice(1)}: $${
       line[1]
     } for "${line[2]}"`
@@ -34,52 +49,52 @@ Transaction.prototype.updateTransactionsList = function (line) {
 
 Transaction.prototype.parseIncomeExpenseTransaction = function (line) {
   if (line[0] !== "income" && line[0] !== "expense") {
-    console.log("Malformed Command");
-    console.info("Usage: add [income | expense] [amount] [description]");
+    logger("info", "Usage: add [income | expense] [amount] [description]");
     return false;
   }
 
   if (isNaN(line[1])) {
-    console.log("Second argument should be a valid number");
-    console.info("Usage: add [income | expense] [amount] [description]");
+    logger(
+      "info",
+      "Second argument should be a valid number\nUsage: add [income | expense] [amount] [description]"
+    );
     return false;
   }
 
   return true;
 };
 Transaction.prototype.fetchAllTransactions = function (options, filter) {
-
-  if (this.transactions.length === 0) {
-    console.log("No Transactions to show");
+  const transactions = TransactionStore.getAll();
+  if (transactions.length === 0) {
+    logger("info", "No Transactions to show");
     return;
   }
-  if (!filter) {
-    if (options === "all") {
-      this.transactions.forEach((t, i) => {
-        console.log(
-          `${i + 1}. ${t.type.slice(0, 1).toUpperCase() + t.type.slice(1)} - $${
-            t.amount
-          } - ${t.description}`
-        );
-      });
-    } else {
-      const filtered = this.transactions.filter((t, i) => {
-        if (t.type === options) {
-          return t
-        }
-      });
 
-      filtered.length === 0 ?console.log('No Transactions'): filtered.forEach((t, i) => {
-        console.log(
-          `${i + 1}. ${t.type.slice(0, 1).toUpperCase() + t.type.slice(1)} - $${
-            t.amount
-          } - ${t.description}`
-        );
-      });
+  const filtered = TransactionStore.getByType(options);
+
+  if (filter.length !== 0) {
+    const sortKey = `sortBy${filter[1]
+      .charAt(0)
+      .toUpperCase()}${filter[1].slice(1)}${filter[2]
+      .charAt(0)
+      .toUpperCase()}${filter[2].slice(1)}`;
+    if (this.sortFunc[sortKey]) {
+      filtered.sort(this.sortFunc[sortKey]);
+    } else {
+      console.log("Invalid sort option");
+      return;
     }
   }
-
+  filtered.length === 0
+    ? console.log("No Transactions")
+    : filtered.forEach((t, i) => {
+        logger(
+          "info",
+          `${i + 1}. ${t.type.slice(0, 1).toUpperCase() + t.type.slice(1)} - $${
+            t.amount
+          } - ${t.description}`
+        );
+      });
 };
-Transaction.prototype.transactions = [];
 
 export default Transaction;
