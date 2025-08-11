@@ -1,6 +1,5 @@
 import TransactionStore from "../store/TransactionStore.js";
-import {logger, logTransactions} from "../utils/logger.js";
-import sortFunc from "../utils/sort.js";
+import {logger} from "../utils/logger.js";
 function Transaction() {
 
 }

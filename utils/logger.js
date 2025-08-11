@@ -16,6 +16,7 @@ function logger(type, message) {
 }
 
 function printHelpCommands() {
+  
   console.log(`Available commands:
     Command: add [income | expense] [amount] [description] \n
       Example: add income 1000 "Salary for September"
@@ -31,7 +32,16 @@ function printHelpCommands() {
     Command: write - Writes a data to a file
       Example: write\n
     Command: exit
-      Example: exit \n`);
+      Example: exit \n
+    To upload existing Transactions from a file. Place File in the following path
+      Path: /data/upload/<filename>.{csv,txt}
+      Header/Data Format: Type - Amount - Description
+      Amount Defaults to '$'
+      Key Points to remember
+        1. All file types should include headers
+        2. For CSV, currently only csv extension is supported
+        3. Text files should be delimited/separated by '-'      
+      `);
   console.log(`\nUse 'help' to see available commands.`);
 }
 

@@ -1,0 +1,3 @@
+Type - Amount - Description
+Income - $300 - rent
+Expense - $300 - rent
