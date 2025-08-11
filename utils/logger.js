@@ -1,4 +1,4 @@
-export default function (type, message) {
+function logger(type, message) {
   const timestamp = new Date().toLocaleDateString();
   switch (type) {
     case "info":
@@ -15,17 +15,33 @@ export default function (type, message) {
   }
 }
 
-export function printHelpCommands() {
+function printHelpCommands() {
   console.log(`Available commands:
-  add [income | expense] [amount] [description] \n
-      Example: add income 1000 "Salary for September" \n
-      Example: add expense 200 "Groceries" \n
-  list [all | income | expense] [filter] \n
-      Available filters: date, amount\n
-      Sort key must be provided [asc | desc] \n
-  Example: list income date asc \n
-  Example: list expense amount desc \n
-  exit \n
-  Example: exit \n`);
+    Command: add [income | expense] [amount] [description] \n
+      Example: add income 1000 "Salary for September"
+      Example: add expense 200 "Groceries"\n
+    Command: list [all | income | expense] [filter] \n
+      Available filters: date, amount
+      Sort key must be provided [asc | desc]
+      Example: list income date asc
+      Example: list expense amount desc\n
+    Command: summary
+      Example: summary\n
+    Command: exit
+      Example: exit \n`);
   console.log(`\nUse 'help' to see available commands.`);
 }
+
+function logTransactions(transactions) {
+  transactions.forEach((transaction) => {
+    logger(
+      "info",
+      `${
+        transaction.type.slice(0, 1).toUpperCase() + transaction.type.slice(1)
+      } - $${transaction.amount} - ${transaction.description}`
+    );
+  });
+}
+
+
+export { logTransactions,printHelpCommands,logger}

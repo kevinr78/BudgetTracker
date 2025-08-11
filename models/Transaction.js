@@ -1,20 +1,8 @@
 import TransactionStore from "../store/TransactionStore.js";
-import logger from "../utils/logger.js";
+import {logger, logTransactions} from "../utils/logger.js";
+import sortFunc from "../utils/sort.js";
 function Transaction() {
-  this.sortFunc = {
-    sortByDateAsc: function (a, b) {
-      return new Date(a.date) - new Date(b.date);
-    },
-    sortByDateDesc: function (a, b) {
-      return new Date(b.date) - new Date(a.date);
-    },
-    sortByAmountAsc: function (a, b) {
-      return a.amount - b.amount;
-    },
-    sortByAmountDesc: function (a, b) {
-      return b.amount - a.amount;
-    },
-  };
+
 }
 
 Transaction.prototype.parseTransaction = function (...line) {
@@ -63,38 +51,8 @@ Transaction.prototype.parseIncomeExpenseTransaction = function (line) {
 
   return true;
 };
-Transaction.prototype.fetchAllTransactions = function (options, filter) {
-  const transactions = TransactionStore.getAll();
-  if (transactions.length === 0) {
-    logger("info", "No Transactions to show");
-    return;
-  }
 
-  const filtered = TransactionStore.getByType(options);
 
-  if (filter.length !== 0) {
-    const sortKey = `sortBy${filter[1]
-      .charAt(0)
-      .toUpperCase()}${filter[1].slice(1)}${filter[2]
-      .charAt(0)
-      .toUpperCase()}${filter[2].slice(1)}`;
-    if (this.sortFunc[sortKey]) {
-      filtered.sort(this.sortFunc[sortKey]);
-    } else {
-      console.log("Invalid sort option");
-      return;
-    }
-  }
-  filtered.length === 0
-    ? console.log("No Transactions")
-    : filtered.forEach((t, i) => {
-        logger(
-          "info",
-          `${i + 1}. ${t.type.slice(0, 1).toUpperCase() + t.type.slice(1)} - $${
-            t.amount
-          } - ${t.description}`
-        );
-      });
-};
+
 
 export default Transaction;

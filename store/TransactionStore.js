@@ -1,3 +1,5 @@
+import Transaction from "../models/Transaction.js";
+
 export default {
   transactions: [],
   add(transaction) {
@@ -9,4 +11,8 @@ export default {
   getByType(type) {
     return this.transactions.filter((t) => t.type === type);
   },
+  filterTransactions(option){
+    return option === 'all' ? [...this.transactions]: this.transactions
+    .filter(t => t.type === option)
+  }
 };
