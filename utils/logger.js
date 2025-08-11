@@ -23,10 +23,13 @@ function printHelpCommands() {
     Command: list [all | income | expense] [filter] \n
       Available filters: date, amount
       Sort key must be provided [asc | desc]
-      Example: list income date asc
-      Example: list expense amount desc\n
+      Example: list income --sort date asc
+      Example: list expense --sort amount desc
+      Example: list all --sort amount asc\n
     Command: summary
       Example: summary\n
+    Command: write - Writes a data to a file
+      Example: write\n
     Command: exit
       Example: exit \n`);
   console.log(`\nUse 'help' to see available commands.`);

@@ -3,13 +3,16 @@ import  {logger, printHelpCommands } from "./utils/logger.js";
 import { addCommnadHelper } from "./commands/add.js";
 import { listCommandHelper } from "./commands/list.js";
 import { summaryCommandHelper } from "./commands/summary.js";
+import {fileWrite} from './utils/file.js'
+
 const commandPrompt = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
   prompt: "Budget>",
 });
 
-const handleCommands = function (line) {
+
+const handleCommands = async function (line) {
 
   const [command] = line.trim().split(" ");
   switch (command) {
@@ -28,6 +31,9 @@ const handleCommands = function (line) {
     case 'exit':
       commandPrompt.close();
       break;
+    case 'write':
+      await fileWrite();
+      break;
     default:
       logger("error", "Unknown command. Try: add, list, exit\n Type 'help' to see list of avaible commands and usage");
       break;
@@ -43,8 +49,9 @@ commandPrompt
       handleCommands(trimmed);
     }
     commandPrompt.prompt();
+
   })
-  .on("close", () => {
+  .on("close", async () => {
     console.log("GoodBye");
     process.exit(0);
   });

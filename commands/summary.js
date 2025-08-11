@@ -18,14 +18,14 @@ export const summaryCommandHelper = function () {
   logger(
     "info",
     `
-          \tSummary:\n
-          Income: $${summaryDetails.income}
-          Expense: $${summaryDetails.expense}
-          Total: $${
-            summaryDetails.total > 0
-              ? summaryDetails.total
-              : "-" + summaryDetails.total
-          }
-        `
+      \tSummary:\n
+      Income: $${summaryDetails.income}
+      Expense: $${summaryDetails.expense}
+      Total: $${
+        summaryDetails.total > 0
+          ? summaryDetails.total
+          : "-" + summaryDetails.total
+      }
+    `
   );
 };
